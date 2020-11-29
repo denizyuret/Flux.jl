@@ -247,16 +247,13 @@ function BatchNorm(chs::Integer, σ=identity;
           affine=true, track_stats=true,
           ϵ=1f-5, momentum=0.1f0)
 
-  if affine
-    β = initβ(chs)
-    γ = initγ(chs)
-  else
-    β = nothing
-    γ = nothing
-  end  
-  
+  β = affine ? initβ(chs) : nothing
+  γ = affine ? initγ(chs) : nothing
+  μ = track_stats ? zeros(Float32, chs) : nothing
+  σ² = track_stats ? ones(Float32, chs) : nothing
+
   return BatchNorm(σ, β, γ,
-            0, 1, ϵ, momentum, 
+            μ, σ², ϵ, momentum, 
             affine, track_stats, nothing)
 end
 
@@ -335,20 +332,18 @@ function InstanceNorm(chs::Integer, σ=identity;
                     affine=false, track_stats=false,
                     ϵ=1f-5, momentum=0.1f0)
 
-  if affine
-    β = initβ(chs)
-    γ = initγ(chs)
-  else
-    β = nothing
-    γ = nothing
-  end  
+  β = affine ? initβ(chs) : nothing
+  γ = affine ? initγ(chs) : nothing
+  μ = track_stats ? zeros(Float32, chs) : nothing
+  σ² = track_stats ? ones(Float32, chs) : nothing
+
   return InstanceNorm(σ, β, γ,
             0, 1, ϵ, momentum, 
             affine, track_stats, nothing)
 end
 
-trainable(in::InstanceNorm) = hasaffine(in) ? (in.β, in.γ) : ()
 @functor InstanceNorm
+trainable(in::InstanceNorm) = hasaffine(in) ? (in.β, in.γ) : ()
 
 function (l::InstanceNorm)(x)
   @assert ndims(x) > 2
