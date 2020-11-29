@@ -8,7 +8,7 @@ function (BN::Flux.BatchNorm)(x::Union{CuArray{T,2},CuArray{T,4},CuArray{T,5}},
   
   return BN.σ.(batchnorm(BN.γ, BN.β, x, BN.μ, BN.σ², BN.momentum; 
                   cache=cache, alpha=1, beta=0, eps=BN.ϵ, 
-                  training=_isactive(BN)))
+                  training=Flux._isactive(BN)))
 end
 
 @adjoint function batchnorm(g, b, x, running_mean, running_var, momentum; kw...)

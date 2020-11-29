@@ -17,7 +17,8 @@ const BROKEN_LAYERS = Union{DepthwiseConv,
                             AlphaDropout,
                             GroupNorm}
 
-function gpu_gradtest(name::String, layers::Vector, x_cpu=nothing, args...; test_cpu=true)
+function gpu_gradtest(name::String, layers::Vector, x_cpu=nothing, args...; 
+                      test_cpu=true, atol=1e-4, rtol=1e-4)
   isnothing(x_cpu) && error("Missing input to test the layers against.")
   @testset "$name GPU grad tests" begin
     for layer in layers
@@ -45,14 +46,14 @@ function gpu_gradtest(name::String, layers::Vector, x_cpu=nothing, args...; test
 
           # test 
           if test_cpu
-            @test y_gpu ≈ y_cpu   rtol=1e-4 atol=1e-4
-            @test Array(xg_gpu) ≈ xg_cpu   rtol=1e-4 atol=1e-4
+            @test y_gpu ≈ y_cpu   atol=atol rtol=rtol
+            @test Array(xg_gpu) ≈ xg_cpu  atol=atol rtol=rtol
           end
           @test gs_gpu isa Flux.Zygote.Grads
           for (p_cpu, p_gpu) in zip(ps_cpu, ps_gpu)
             @test gs_gpu[p_gpu] isa Flux.CUDA.CuArray
             if test_cpu
-              @test Array(gs_gpu[p_gpu]) ≈ gs_cpu[p_cpu]   rtol=1e-4 atol=1e-4
+              @test Array(gs_gpu[p_gpu]) ≈ gs_cpu[p_cpu]  atol=atol rtol=rtol
             end
           end
         end
@@ -68,7 +69,8 @@ ConvTransposeNoBias(args...) = ConvTranspose(args...; bias=false)
 CrossCorNoBias(args...) = CrossCor(args...; bias=false)
 DepthwiseConvNoBias(args...) = DepthwiseConv(args...;bias=false)
 r = rand(Float32, 28, 28, 1, 1)
-conv_layers = [Conv, ConvNoBias, ConvTranspose, ConvTransposeNoBias, CrossCor, CrossCorNoBias, DepthwiseConv, DepthwiseConvNoBias]
+conv_layers = [Conv, ConvNoBias, ConvTranspose, ConvTransposeNoBias, 
+              CrossCor, CrossCorNoBias, DepthwiseConv, DepthwiseConvNoBias]
 gpu_gradtest("Conv", conv_layers, r, (2,2), 1=>3)
 
 pooling_layers = [MaxPool, MeanPool]
@@ -81,15 +83,17 @@ dropout_layers = [Dropout, AlphaDropout]
 gpu_gradtest("Dropout", dropout_layers, r, 0.5f0; test_cpu=false) # dropout is not deterministic
 
 layer_norm = [LayerNorm]
-gpu_gradtest("LayerNorm 1", layer_norm, rand(Float32, 28,28,3,4), 1, test_cpu=false) #TODO fix errors
-gpu_gradtest("LayerNorm 2", layer_norm, rand(Float32, 5,4), 5)
+gpu_gradtest("LayerNorm 1", layer_norm, rand(Float32,28,28,3,4), (28,28), atol=1e-2)
+gpu_gradtest("LayerNorm 2", layer_norm, rand(Float32,5,4), 5)
 
 batch_norm = [BatchNorm]
-gpu_gradtest("BatchNorm 1", batch_norm, rand(Float32, 28,28,3,4), 3, test_cpu=false) #TODO fix errors
-gpu_gradtest("BatchNorm 2", batch_norm, rand(Float32, 5,4), 5)
+gpu_gradtest("BatchNorm 1", batch_norm, rand(Float32,28,28,3,4), 3, atol=1e-2)
+gpu_gradtest("BatchNorm 2", batch_norm, rand(Float32,5,4), 5)
 
-instancenorm = [i -> InstanceNorm(i;affine=false), i -> InstanceNorm(i;affine=true)]
-gpu_gradtest("InstanceNorm", instancenorm, r, 1)
+instancenorm = [InstanceNorm]
+gpu_gradtest("InstanceNorm 1", instancenorm, rand(Float32,28,28,3,4), 3, atol=1e-2)
+gpu_gradtest("InstanceNorm 2", instancenorm, rand(Float32,28,3,4), 3)
+gpu_gradtest("InstanceNorm 3", instancenorm, rand(Float32,28,1,4), 1)
 
 groupnorm = [GroupNorm]
 gpu_gradtest("GroupNorm", groupnorm, rand(Float32, 28,28,3,1), 3, 1)
