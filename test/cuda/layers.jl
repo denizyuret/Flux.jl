@@ -15,7 +15,6 @@ end
 # whereas, the rest are scalar indexing issues.
 const BROKEN_LAYERS = Union{DepthwiseConv,
                             AlphaDropout,
-                            InstanceNorm,
                             GroupNorm}
 
 function gpu_gradtest(name::String, layers::Vector, x_cpu=nothing, args...; test_cpu=true)
