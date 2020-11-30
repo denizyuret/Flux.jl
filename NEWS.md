@@ -2,8 +2,8 @@
 
 ## v0.12.0
 
+* Dense and Conv layers no longer perform implicit type conversion ([#1394](https://github.com/FluxML/Flux.jl/pull/1394)).
 * Excise datasets in favour of other providers in the julia ecosystem.
-* other new features and bug fixes (see GitHub's releases page)
 * Added option to set `bias` to [false](https://github.com/FluxML/Flux.jl/pull/1379) to eliminating `bias` from being trained.
 * Some not commonly used constructors are removed from [`Conv layers`](https://github.com/FluxML/Flux.jl/pull/1379)).
 

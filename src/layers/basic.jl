@@ -123,24 +123,20 @@ end
 
 @functor Dense
 
-function (a::Dense)(x::AbstractArray)
+function (a::Dense)(x::AbstractVecOrMat)
+  eltype(a.W) == eltype(x) || _dense_typewarn(a, x)
   W, b, σ = a.W, a.b, a.σ
   σ.(W*x .+ b)
 end
+
+_dense_typewarn(d, x) = @warn "Element types don't match for layer $d, this will be slow." typeof(d.W) typeof(x) maxlog=1
+Zygote.@nograd _dense_typewarn
 
 function Base.show(io::IO, l::Dense)
   print(io, "Dense(", size(l.W, 2), ", ", size(l.W, 1))
   l.σ == identity || print(io, ", ", l.σ)
   print(io, ")")
 end
-
-# Try to avoid hitting generic matmul in some simple cases
-# Base's matmul is so slow that it's worth the extra conversion to hit BLAS
-(a::Dense{<:Any,W})(x::AbstractArray{T}) where {T <: Union{Float32,Float64}, W <: AbstractArray{T}} =
-  invoke(a, Tuple{AbstractArray}, x)
-
-(a::Dense{<:Any,W})(x::AbstractArray{<:AbstractFloat}) where {T <: Union{Float32,Float64}, W <: AbstractArray{T}} =
-  a(T.(x))
 
 """
     outdims(l::Dense, isize)
