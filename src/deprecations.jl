@@ -8,7 +8,3 @@
 @deprecate Conv(; weight,  bias, σ=identity, kws...) Conv(weight, bias, σ; kws...) 
 @deprecate ConvTranspose(; weight, bias, σ=identity, kws...) ConvTranspose(weight, bias, σ; kws...) 
 @deprecate DepthwiseConv(; weight, bias, σ=identity, kws...) DepthwiseConv(weight, bias, σ; kws...) 
-
-
-
-
