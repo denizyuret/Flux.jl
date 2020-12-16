@@ -128,8 +128,8 @@ julia> params(c1stride) |> length  # no trainable bias
 1
 ```
 """
-function Conv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ=identity;
-              stride=1, pad=0, dilation=1) where {T,N}
+function Conv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ = identity;
+              stride = 1, pad = 0, dilation = 1) where {T,N}
   stride = expand(Val(N-2), stride)
   dilation = expand(Val(N-2), dilation)
   pad = calc_padding(Conv, pad, size(w)[1:N-2], dilation, stride)
@@ -137,9 +137,9 @@ function Conv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, �
   return Conv(σ, w, bias, stride, pad, dilation)
 end
 
-function Conv(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ=identity;
-            init=glorot_uniform,  stride=1, pad=0, dilation=1,
-            weight = convfilter(k, ch; init), bias=true) where N
+function Conv(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ = identity;
+            init = glorot_uniform,  stride = 1, pad = 0, dilation = 1,
+            weight = convfilter(k, ch; init), bias = true) where N
 
   Conv(weight, bias, σ; stride, pad, dilation)
 end
@@ -242,8 +242,8 @@ end
 Constructs a layer with the given weight and bias arrays.
 Accepts the same keywords as the `ConvTranspose((4,4), 3=>7, relu)` method.
 """
-function ConvTranspose(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ=identity;
-                      stride=1, pad=0, dilation=1) where {T,N}
+function ConvTranspose(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ = identity;
+                      stride = 1, pad = 0, dilation = 1) where {T,N}
   stride = expand(Val(N-2), stride)
   dilation = expand(Val(N-2), dilation)
   pad = calc_padding(ConvTranspose, pad, size(w)[1:N-2], dilation, stride)
@@ -251,9 +251,9 @@ function ConvTranspose(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVect
   return ConvTranspose(σ, w, bias, stride, pad, dilation)
 end
 
-function ConvTranspose(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ=identity;
-                      init=glorot_uniform, stride=1, pad=0, dilation=1,
-                      weight=convfilter(k, reverse(ch), init =init), bias=true) where N
+function ConvTranspose(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ = identity;
+                      init = glorot_uniform, stride = 1, pad = 0, dilation = 1,
+                      weight=convfilter(k, reverse(ch), init = init), bias = true) where N
 
   ConvTranspose(weight, bias, σ; stride, pad, dilation)
 end
@@ -346,8 +346,8 @@ end
 Constructs a layer with the given weight and bias arrays.
 Accepts the same keywords as the `DepthwiseConv((4,4), 3=>6, relu)` method.
 """
-function DepthwiseConv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ=identity;
-                      stride=1, pad=0, dilation=1) where {T,N}
+function DepthwiseConv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ = identity;
+                      stride = 1, pad = 0, dilation = 1) where {T,N}
   stride = expand(Val(N-2), stride)
   dilation = expand(Val(N-2), dilation)
   pad = calc_padding(DepthwiseConv, pad, size(w)[1:N-2], dilation, stride)
@@ -355,9 +355,9 @@ function DepthwiseConv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVect
   return DepthwiseConv(σ, w, bias, stride, pad, dilation)
 end
 
-function DepthwiseConv(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ=identity;
-                init=glorot_uniform, stride=1, pad=0, dilation=1,
-                weight=depthwiseconvfilter(k, ch, init=init), bias=true) where N
+function DepthwiseConv(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ = identity;
+                init = glorot_uniform, stride = 1, pad = 0, dilation = 1,
+                weight = depthwiseconvfilter(k, ch, init = init), bias = true) where N
   @assert ch[2] % ch[1] == 0 "Output channels must be integer multiple of input channels"
   return DepthwiseConv(weight, bias, σ; stride, pad, dilation)
 end
@@ -442,8 +442,8 @@ end
 Constructs a layer with the given weight and bias arrays.
 Accepts the same keywords as the `CrossCor((4,4), 3=>7, relu)` method.
 """
-function CrossCor(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ=identity;
-                  stride=1, pad=0, dilation=1) where {T,N}
+function CrossCor(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ = identity;
+                  stride = 1, pad = 0, dilation = 1) where {T,N}
   stride = expand(Val(N-2), stride)
   dilation = expand(Val(N-2), dilation)
   pad = calc_padding(CrossCor, pad, size(w)[1:N-2], dilation, stride)
@@ -451,9 +451,9 @@ function CrossCor(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}
   return CrossCor(σ, w, bias, stride, pad, dilation)
 end
 
-function CrossCor(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ=identity;
-                  init=glorot_uniform, stride=1, pad=0, dilation=1,
-                  weight=convfilter(k, ch, init=init), bias = true) where N
+function CrossCor(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ = identity;
+                  init = glorot_uniform, stride = 1, pad = 0, dilation = 1,
+                  weight = convfilter(k, ch, init = init), bias = true) where N
 
   return CrossCor(weight, bias, σ; stride, pad, dilation)
 end

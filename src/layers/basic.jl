@@ -116,8 +116,8 @@ end
 
 Dense(W, b) = Dense(W, b, identity)
 
-function Dense(in::Integer, out::Integer, σ=identity;
-               initW=glorot_uniform, initb=zeros, bias=true)
+function Dense(in::Integer, out::Integer, σ = identity;
+               initW = glorot_uniform, initb = zeros, bias = true)
   return Dense(initW(out, in), create_bias(bias, initb, out), σ)
 end
 
