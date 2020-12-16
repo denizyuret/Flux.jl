@@ -138,7 +138,7 @@ function Conv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, �
 end
 
 function Conv(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ = identity;
-            init = glorot_uniform,  stride = 1, pad = 0, dilation = 1,
+            init = glorot_uniform, stride = 1, pad = 0, dilation = 1,
             weight = convfilter(k, ch; init), bias = true) where N
 
   Conv(weight, bias, σ; stride, pad, dilation)
@@ -253,7 +253,7 @@ end
 
 function ConvTranspose(k::NTuple{N,Integer}, ch::Pair{<:Integer,<:Integer}, σ = identity;
                       init = glorot_uniform, stride = 1, pad = 0, dilation = 1,
-                      weight=convfilter(k, reverse(ch), init = init), bias = true) where N
+                      weight = convfilter(k, reverse(ch), init = init), bias = true) where N
 
   ConvTranspose(weight, bias, σ; stride, pad, dilation)
 end
