@@ -115,17 +115,8 @@ Conv((3,), 4=>5, σ)
 julia> c1(randn(100, 4, 64)) |> size
 (98, 5, 64)
 
-julia> c1stride = Conv(; weight, bias=false, activation=relu, stride=2, pad=SamePad())
-Conv((3,), 4=>5, relu)
-
-julia> c1stride(randn(100, 4, 64)) |> size
-(50, 5, 64)
-
 julia> params(c1) |> length
 2
-
-julia> params(c1stride) |> length  # no trainable bias
-1
 ```
 """
 function Conv(w::AbstractArray{T,N}, b::Union{Bool, Zeros, AbstractVector{T}}, σ = identity;

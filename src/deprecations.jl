@@ -5,6 +5,6 @@
 @deprecate GroupNorm(G, λ, β, γ, μ, σ², ϵ, momentum) GroupNorm(G, λ, β, γ, μ, σ², ϵ, momentum, nothing)
 
 # v0.13 deprecations
-@deprecate Conv(; weight,  bias, σ=identity, kws...) Conv(weight, bias, σ; kws...) 
-@deprecate ConvTranspose(; weight, bias, σ=identity, kws...) ConvTranspose(weight, bias, σ; kws...) 
-@deprecate DepthwiseConv(; weight, bias, σ=identity, kws...) DepthwiseConv(weight, bias, σ; kws...) 
+@deprecate Conv(; weight,  bias, activation=identity, kws...) Conv(weight, bias, activation; kws...) 
+@deprecate ConvTranspose(; weight, bias, activation=identity, kws...) ConvTranspose(weight, bias, activation; kws...) 
+@deprecate DepthwiseConv(; weight, bias, activation=identity, kws...) DepthwiseConv(weight, bias, activation; kws...) 
